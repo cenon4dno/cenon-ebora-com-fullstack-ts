@@ -18,6 +18,7 @@ import {protractor, webdriver_update} from 'gulp-protractor';
 import {Instrumenter} from 'isparta';
 import webpack from 'webpack-stream';
 import makeWebpackConfig from './webpack.make';
+import merge from 'gulp-merge-json';
 
 var plugins = gulpLoadPlugins();
 var config;
@@ -28,6 +29,7 @@ const paths = {
     client: {
         assets: `${clientPath}/assets/**/*`,
         images: `${clientPath}/assets/images/**/*`,
+        cms: `${clientPath}/{app,components}/**/*.json`,
         revManifest: `${clientPath}/assets/rev-manifest.json`,
         scripts: [
             `${clientPath}/**/!(*.spec|*.mock).ts`,
@@ -46,6 +48,7 @@ const paths = {
           `!${serverPath}/config/local.env.sample.js`
         ],
         json: [`${serverPath}/**/*.json`],
+        cms: `${serverPath}/config/cms.json`,
         test: {
           integration: [`${serverPath}/**/*.integration.js`, 'mocha.global.js'],
           unit: [`${serverPath}/**/*.spec.js`, 'mocha.global.js']
@@ -183,7 +186,7 @@ gulp.task('env:prod', () => {
  ********************/
 
 gulp.task('inject', cb => {
-    runSequence(['inject:less'], cb);
+    runSequence(['inject:less', 'inject:cms'], cb);
 });
 
 gulp.task('inject:less', () => {
@@ -202,6 +205,13 @@ gulp.task('inject:less', () => {
                 }
             }))
         .pipe(gulp.dest(`${clientPath}/app`));
+});
+
+gulp.task('inject:cms', () => {
+    del([`${serverPath}/config/cms.json`]);
+    return gulp.src(paths.client.cms)
+      .pipe(merge('combined.json'))
+      .pipe(gulp.dest(`${serverPath}/config/cms`));
 });
 
 gulp.task('webpack:dev', function() {

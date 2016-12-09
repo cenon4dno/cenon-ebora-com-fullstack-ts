@@ -1,0 +1,10 @@
+{
+	"DEMO_MESSAGE": {
+		"tag": "HOME_HEADER",
+		"message": "Development Tools"
+	},
+	"DEMO_MESSAGE2": {
+		"tag": "DEMO_MESSAGE2",
+		"message": "Development Tools2"
+	}
+}

@@ -5,6 +5,9 @@
 
 'use strict';
 import Thing from '../api/thing/thing.model';
+import Cms from '../api/cms/cms.model';
+import CmsFeed from './cms/combined';
+import _ from 'lodash';
 
 Thing.find({}).remove()
   .then(() => {
@@ -35,6 +38,16 @@ Thing.find({}).remove()
       name: 'Deployment Ready',
       info: 'Easily deploy your app to Heroku or Openshift with the heroku '
             + 'and openshift subgenerators'
+    });
+  });
+
+Cms.find({}).remove()
+  .then(() => {
+    _.each(CmsFeed, function(val) {
+      Cms.create(val)
+      .then(() => {
+        console.log('finished populating cms val', val);
+      });
     });
   });
 
